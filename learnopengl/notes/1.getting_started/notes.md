@@ -1,5 +1,6 @@
-# OpenGL Overview
+# 1. Getting Started
 
+## OpenGL Overview
 ### Extensions
 * When large optimization for rendering is released by a graphics card company,
     can enable it through the extension name. As a result, these new rendering
@@ -13,4 +14,10 @@
     (for example) draw lines instead of triangles.
 
 ## Objects
-* 
+* Collection of options representing a subset of OpenGL's state
+    * I.e. object representing settings of the drawing window (size, color
+        supports, etc.)
+* As soon as objects are populated with their **"options"**, context target is set back to default.
+
+## Creating a Window
+### GLFW
