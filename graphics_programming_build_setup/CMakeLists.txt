@@ -18,6 +18,8 @@ file(GLOB SOURCES "${CMAKE_CURRENT_SOURCE_DIR}/src/*.cc")
 add_executable(${PROJECT_NAME} ${SOURCES})
 
 # GLFW
+# Suppress CMP0072 warning (unset OpenGL_GL_PREFERENCE for cmake version > 3.11)
+set(OpenGL_GL_PREFERENCE GLVND)
 # If GLFW binaries installed on local machine
 find_package(OpenGL REQUIRED)
 find_package(glfw3 REQUIRED)
