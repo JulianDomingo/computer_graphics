@@ -35,10 +35,13 @@ foreach(SECTION ${SECTIONS})
     # Recall ${SECTION} target is already set, so executable must have different
     # target name
     set(NAME "${SECTION}.out")
+    # Creates executable file with files dictated by current ${SOURCE_FILES}
     add_executable(${NAME} ${SOURCE_FILES})
-    target_link_libraries(${NAME} ${OPENGL_gl_LIBRARY} glfw)
+    # TODO: Determine what below accomplishes
+    #target_link_libraries(${NAME} ${OPENGL_gl_LIBRARY} glfw)
 
     if (UNIX AND NOT APPLE)
+        # Explictly tells CMake project supports C++
         set_target_properties(${NAME} PROPERTIES LINKER_LANGUAGE CXX)
         set_target_properties(${NAME} PROPERTIES RUNTIME_OUTPUT_DIRECTORY
             ${BIN_DIR}/${SECTION})
