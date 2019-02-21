@@ -8,10 +8,25 @@ set(BIN_DIR "${CMAKE_CURRENT_SOURCE_DIR}/bin")
 # Set directory for executables
 set(CMAKE_RUNTIME_OUTPUT_DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR}/bin)
 
-# GLFW setup
+# OpenGL setup
 set(OpenGL_GL_PREFERENCE GLVND)
 find_package(OpenGL REQUIRED)
-find_package(glfw3 REQUIRED)
+include_directories(${OPENGL_INCLUDE_DIRS})
+
+# GLFW setup
+# Steps taken from
+# https://www.glfw.org/docs/3.0/build.html#build_link_cmake_pkgconfig. Assumes
+# binaries have been installed on local machine (more portable than linking from
+# source)
+find_package(PkgConfig REQUIRED)
+pkg_search_module(GLFW REQUIRED glfw3)
+include_directories(${GLFW_INCLUDE_DIRS})
+
+# GLEW setup
+find_package(GLEW REQUIRED)
+include_directories(${GLEW_INCLUDE_DIRS})
+link_libraries(${GLEW_LIBRARIES})
+add_definitions(${GLEW_DEFINITIONS})
 
 # Set variable for each section (for executable generation)
 set(SECTIONS
@@ -25,7 +40,7 @@ set(SECTIONS
 foreach(SECTION ${SECTIONS})
     file(GLOB SOURCE_FILES
         "${SRC_DIR}/${SECTION}/*.h"
-        "${SRC_DIR}/${SECTION}/*.cpp"
+        "${SRC_DIR}/${SECTION}/*.cc"
         # Below for GLSL shaders
         "${SRC_DIR}/${SECTION}/*.vs"
         "${SRC_DIR}/${SECTION}/*.fs"
@@ -37,8 +52,9 @@ foreach(SECTION ${SECTIONS})
     set(NAME "${SECTION}.out")
     # Creates executable file with files dictated by current ${SOURCE_FILES}
     add_executable(${NAME} ${SOURCE_FILES})
-    # TODO: Determine what below accomplishes
-    #target_link_libraries(${NAME} ${OPENGL_gl_LIBRARY} glfw)
+
+    # Links shared library version of GLFW and OpenGL to executable
+    target_link_libraries(${NAME} ${GLFW_LIBRARIES} ${OPENGL_LIBRARIES})
 
     if (UNIX AND NOT APPLE)
         # Explictly tells CMake project supports C++
