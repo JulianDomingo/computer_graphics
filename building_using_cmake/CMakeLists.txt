@@ -1,18 +1,31 @@
+# Below is a template for projects using OpenGL / GLFW / GLEW to build
+# successfully on a linux platform.
+# Each command is prefaced with a tidbit on the command's purpose.
+# TODO: Update to make platform-independent
+
+#
 cmake_minimum_required(VERSION 3.1)
+
+# Sets the projct name. Once set, it can alternatively be accessed using
+# ${PROJECT_NAME}.
 project(modern_opengl)
 
+# set() binds argument 1 to all subsequent argument(s).
 set(SRC_DIR "${CMAKE_CURRENT_SOURCE_DIR}/src")
 set(INC_DIR "${CMAKE_CURRENT_SOURCE_DIR}/include")
 set(BIN_DIR "${CMAKE_CURRENT_SOURCE_DIR}/bin")
-set(WS_DIR "${CMAKE_CURRENT_SOURCE_DIR}/workspace")
-set(SHADER_DIR "${CMAKE_CURRENT_SOURCE_DIR}/shaders")
 
 # Set directory for executables
 set(CMAKE_RUNTIME_OUTPUT_DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR}/bin)
 
 # OpenGL setup
+
+# "GLVND" allows compatibility for legacy libraries in OpenGL. Present in CMake
+# versions >= 3.11.
 set(OpenGL_GL_PREFERENCE GLVND)
+# Find OpenGL
 find_package(OpenGL REQUIRED)
+# Once package is found, include all of OpenGL's headers.
 include_directories(${OPENGL_INCLUDE_DIRS})
 
 # GLFW setup
@@ -38,27 +51,22 @@ set(SECTIONS
     section_4
     section_5)
 
-# Group together files dependent for all sections
-file(GLOB DEFAULT_DEPENDENCIES
-    "${SRC_DIR}/*.cc"
-    "${INC_DIR}/*.h"
-    # Below for GLSL shaders
-    "${SHADER_DIR}/${SECTION}/*.vs"
-    "${SHADER_DIR}/${SECTION}/*.fs"
-    "${SHADER_DIR}/${SECTION}/*.gs"
-    )
-
-# Make executable for each section using dependent files
+# Make executable for each section
 foreach(SECTION ${SECTIONS})
-    # Specify files from current section
-    file(GLOB FILE_DEPENDENCIES "${WS_DIR}/${SECTION}/*.cc")
+    file(GLOB SOURCE_FILES
+        "${SRC_DIR}/${SECTION}/*.h"
+        "${SRC_DIR}/${SECTION}/*.cc"
+        # Below for GLSL shaders
+        "${SRC_DIR}/${SECTION}/*.vs"
+        "${SRC_DIR}/${SECTION}/*.fs"
+        "${SRC_DIR}/${SECTION}/*.gs"
+    )
 
     # Recall ${SECTION} target is already set, so executable must have different
     # target name
     set(NAME "${SECTION}.out")
-
-    # Create executable
-    add_executable(${NAME} ${FILE_DEPENDENCIES} ${DEFAULT_DEPENDENCIES})
+    # Creates executable file with files dictated by current ${SOURCE_FILES}
+    add_executable(${NAME} ${SOURCE_FILES})
 
     # Links shared library version of GLFW and OpenGL to executable
     target_link_libraries(${NAME} ${GLFW_LIBRARIES} ${OPENGL_LIBRARIES})
@@ -68,12 +76,7 @@ foreach(SECTION ${SECTIONS})
         set_target_properties(${NAME} PROPERTIES LINKER_LANGUAGE CXX)
         set_target_properties(${NAME} PROPERTIES RUNTIME_OUTPUT_DIRECTORY
             ${BIN_DIR}/${SECTION})
-    elseif (APPLE)
-        # TODO:
-    elseif (WIN32)
-        # TODO:
     endif()
-
 endforeach()
 
 include_directories(INCLUDE_DIR ${INC_DIR})
