@@ -64,23 +64,24 @@
     later stages
 * Inputs consist of vertex data values
 * Example .vs (vertex shader):
-    `
-    #version <MAJOR><MINOR><RELEASE> core
 
-    # "layout" is optional. Explicitly defines shader location to avoid needing
-    # to query it in application code.
-    layout (location = 0)
+```
+#version <MAJOR><MINOR><RELEASE> core
 
-    # Input is a vector consisting of 3 values named "pos"
-    in vec3 pos;
+# "layout" is optional. Explicitly defines shader location to avoid needing
+# to query it in application code.
+layout (location = 0)
 
-    void main()
-    {
-        # gl_Position is final position of vertex. Requires a vector of 4
-        values. Below just adds 1.0 for last value.
-        gl_Position = vec4(pos, 1.0);
-    }
-    `
+# Input is a vector consisting of 3 values named "pos"
+in vec3 pos;
+
+void main()
+{
+    # gl_Position is final position of vertex. Requires a vector of 4
+    values. Below just adds 1.0 for last value.
+    gl_Position = vec4(pos, 1.0);
+}
+```
 
 ### Tessellation
 * Allows division of data into smaller primitives (i.e. quad -> triangle). Good
@@ -127,19 +128,20 @@
 * Most important output is pixel color the fragment covers
 * Simplest OpenGL programs usually have a vertex and fragment shader
 * Example .fs (fragment shader):
-    `
-    #version 330
 
-    # Can also capture output from vertex shader using "in" keyword
-    # Output is vector of 4 values named "color"
-    out vec4 color;
+```
+#version 330
 
-    void main()
-    {
-        # No matter where we are, this fragment is red. (R, G, B, ?)
-        color = vec4(1.0, 0.0, 0.0, 1.0);
-    }
-    `
+# Can also capture output from vertex shader using "in" keyword
+# Output is vector of 4 values named "color"
+out vec4 color;
+
+void main()
+{
+    # No matter where we are, this fragment is red. (R, G, B, ?)
+    color = vec4(1.0, 0.0, 0.0, 1.0);
+}
+```
 
 ### Per-Sample Operations
 * Series of tests run to see if the fragment should be drawn
